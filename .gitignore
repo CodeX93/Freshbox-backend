@@ -1,0 +1,39 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+dist/
+build/
+
+# Dependency directories
+.pnp/
+.pnp.js
+
+# VSCode
+.vscode/
+
+# Optional npm cache
+.npm/
+
+# Optional lockfiles
+package-lock.json
+yarn.lock
+
+# Render build logs (if using local CLI)
+render.yaml
