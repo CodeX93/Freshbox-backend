@@ -11,10 +11,10 @@ const fs = require('fs');
 require('./config/passport');
 
 // Import routes
-const userProfileRoutes = require('./route/userProfileRoutes');
-const serviceAreaRoutes=require('./route/serviceAreaRoutes')
-const serviceRoutes=require('./route/serviceRoutes');
+
+const serviceAreaRoutes=require('./route/serviceArea.routes')
 const userRoutes = require('./route/auth.routes');
+const serviceRouter = require('./route/service.routes');
 
 const app = express();
 
@@ -87,6 +87,5 @@ app.listen(PORT, () => {
 
 // Routes 
 app.use('/api/auth', userRoutes);
-app.use('/api/users', userProfileRoutes);
-app.use('/api/service', serviceRoutes.router);
-app.use('/api/serviceArea', serviceAreaRoutes.router);
+app.use('/api/service', serviceRouter);
+app.use('/api/serviceArea', serviceAreaRoutes);

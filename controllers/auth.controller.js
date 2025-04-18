@@ -210,5 +210,66 @@ const verifyEmail = async (req, res) => {
       return res.status(500).json({ success: false, message: "Server error" });
     }
   };
-
-module.exports = {registerUser,loginUser,updateUser,getUser,verifyEmail}
+  const resendOtp = async (req, res) => {
+    try {
+      const { email } = req.body;
+  
+      if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+      }
+  
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      if (user.emailVerified) {
+        return res.status(400).json({ success: false, message: "Email is already verified" });
+      }
+  
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpiry = Date.now() + 10 * 60 * 1000;
+  
+      user.otp = otp;
+      user.otpExpiry = otpExpiry;
+      await user.save();
+  
+      await sendMail({
+        to: email,
+        from: SENDGRID_EMAIL,
+        subject: "Resend OTP - FreshBox",
+        html: `<p>Hello ${user.name},</p><p>Your new OTP for email verification is: <strong>${otp}</strong></p><p>This OTP is valid for 10 minutes.</p>`,
+      });
+  
+      return res.status(200).json({ success: true, message: "OTP resent successfully" });
+  
+    } catch (error) {
+      console.error("Resend OTP Error:", error);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+  
+  const getAllUsers = async (req, res) => {
+    try {
+      const users = await User.find().select("-password");
+  
+      return res.status(200).json({
+        success: true,
+        count: users.length,
+        users,
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+  
+  module.exports = {
+    registerUser,
+    loginUser,
+    updateUser,
+    getUser,
+    verifyEmail,
+    resendOtp,
+    getAllUsers
+  };

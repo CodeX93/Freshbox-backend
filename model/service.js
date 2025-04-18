@@ -1,4 +1,3 @@
-// api/service/model.js
 const mongoose = require('mongoose');
 
 const ServiceSchema = new mongoose.Schema({
@@ -56,7 +55,5 @@ const ServiceSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-
-
 
 module.exports = mongoose.model('Service', ServiceSchema);

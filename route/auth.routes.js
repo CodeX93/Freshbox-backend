@@ -4,7 +4,9 @@ const {
   loginUser,
   getUser,
   updateUser,
-  verifyEmail
+  verifyEmail,
+  getAllUsers,
+  resendOtp
 } = require("../controllers/auth.controller");
 
 const userRoutes = express.Router();
@@ -14,5 +16,7 @@ userRoutes.post("/verify",verifyEmail)
 userRoutes.post("/login", loginUser);
 userRoutes.get("/:id", getUser);
 userRoutes.put("/update/:id", updateUser);
+userRoutes.post("/resend-otp", resendOtp);
+userRoutes.get("/all", getAllUsers); 
 
 module.exports = userRoutes;
