@@ -1,8 +1,6 @@
-// services/phoneAuth.js
 const twilio = require('twilio');
 const crypto = require('crypto');
 
-// Store OTP verification data (in production, use Redis or another store)
 const otpStore = new Map();
 
 // Initialize Twilio client
@@ -10,23 +8,13 @@ const client = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN
   ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
   : null;
 
-/**
- * Sends an OTP to the provided phone number
- *
- * @param {string} phoneNumber - The phone number to send the OTP to
- * @returns {Promise<object>} - Object containing verificationId
- */
 const sendOtp = async (phoneNumber) => {
   try {
-    console.log(`Attempting to send OTP to: ${phoneNumber}`);
-    
-    // Generate a random 6-digit OTP
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // Generate a verification ID
+ 
     const verificationId = crypto.randomBytes(32).toString('hex');
-    
-    // Standardize the phone number
+ 
     const standardizedPhone = phoneNumber.replace(/[\s-()]/g, '');
     
     if (client && process.env.TWILIO_PHONE_NUMBER) {
@@ -83,14 +71,7 @@ const sendOtp = async (phoneNumber) => {
   }
 };
 
-/**
- * Verifies an OTP for a given phone number and verification ID
- *
- * @param {string} phoneNumber - Phone number to verify
- * @param {string} otp - The OTP code to verify
- * @param {string} verificationId - The verification ID associated with the OTP
- * @returns {Promise<boolean>} - True if verification successful, false otherwise
- */
+
 const verifyOtp = async (phoneNumber, otp, verificationId) => {
   try {
     console.log(`Verifying OTP for phone: ${phoneNumber}, verification ID: ${verificationId}`);

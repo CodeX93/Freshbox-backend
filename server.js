@@ -1,5 +1,4 @@
-// server.js
-require('dotenv').config(); // this should be at the very top
+require('dotenv').config(); 
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -9,15 +8,13 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const fs = require('fs');
-
-// Import passport configuration
 require('./config/passport');
 
 // Import routes
-const authRoutes = require('./route/auth');
 const userProfileRoutes = require('./route/userProfileRoutes');
 const serviceAreaRoutes=require('./route/serviceAreaRoutes')
-const serviceRoutes=require('./route/serviceRoutes')
+const serviceRoutes=require('./route/serviceRoutes');
+const userRoutes = require('./route/auth.routes');
 
 const app = express();
 
@@ -27,23 +24,23 @@ app.use(cookieParser());
 
 // Configure CORS with credentials support
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: process.env.CLIENT_URL ,
   credentials: true
 }));
 
 // Configure session
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: process.env.SESSION_SECRET ,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/authapp'
+    mongoUrl: process.env.MONGODB_URI 
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-    secure: false, // Set to false for local development
+    maxAge: 1000 * 60 * 60 * 24 * 7, 
+    secure: false, 
     httpOnly: true,
-    sameSite: 'lax' // Add this for cross-site cookie handling
+    sameSite: 'lax' 
   }
 }));
 
@@ -67,17 +64,10 @@ app.use((req, res, next) => {
 });
 
 // Connect to MongoDB
-const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/authapp';
+const mongoURI = process.env.MONGODB_URI ;
 mongoose.connect(mongoURI)
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
-
-// Routes - Important: The route path /api/users matches your frontend API calls
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userProfileRoutes); // This matches your frontend API calls
-app.use('/api/service', serviceRoutes.router);
-app.use('/api/serviceArea', serviceAreaRoutes.router);
-
 
 
 
@@ -88,8 +78,15 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 5023;
+const PORT = process.env.PORT;
 console.log(`Starting server on port ${PORT}`);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
+// Routes 
+app.use('/api/auth', userRoutes);
+app.use('/api/users', userProfileRoutes);
+app.use('/api/service', serviceRoutes.router);
+app.use('/api/serviceArea', serviceAreaRoutes.router);
