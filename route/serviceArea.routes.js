@@ -5,13 +5,15 @@ const {
   getServiceAreaById,
   updateServiceArea,
   deleteServiceArea,
-  toggleServiceAreaStatus
+  toggleServiceAreaStatus,
+  getAvailableServiceAreas
 } = require("../controllers/serviceArea.controller");
 
 const serviceAreaRouter = express.Router();
 
 serviceAreaRouter.post("/", createServiceArea);
 serviceAreaRouter.get("/", getAllServiceAreas); 
+serviceAreaRouter.get("/avaliable", getAvailableServiceAreas); 
 serviceAreaRouter.put("/:id", updateServiceArea);
 serviceAreaRouter.delete("/:id", deleteServiceArea); 
 serviceAreaRouter.put("/:id/toggle/:status", toggleServiceAreaStatus); 

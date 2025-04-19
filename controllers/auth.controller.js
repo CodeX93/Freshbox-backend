@@ -1,6 +1,7 @@
 const User = require("../model/user");
 const { SENDGRID_EMAIL, sendMail } = require("../utils/email");
 const jwt =require("jsonwebtoken") ;
+const crypto = require('crypto');
 
 
 
@@ -263,6 +264,97 @@ const verifyEmail = async (req, res) => {
       return res.status(500).json({ success: false, message: "Server error" });
     }
   };
+
+
+
+  
+  const addPaymentMethod = async (req, res) => {
+    try {
+      const { id } = req.params;
+      let newMethod = req.body;
+  
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  
+      // Generate a random ID
+      const randomId = crypto.randomBytes(8).toString('hex');
+      newMethod.id = randomId;
+  
+      // If isDefault is true, make all others false
+      if (newMethod.isDefault) {
+        user.paymentMethods.forEach((method) => (method.isDefault = false));
+      }
+  
+      user.paymentMethods.push(newMethod);
+      await user.save();
+  
+      res.status(200).json({ 
+        success: true, 
+        message: 'Payment method added successfully', 
+        paymentMethods: user.paymentMethods ,
+        user
+      });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+  };
+  
+
+// Delete a payment method
+const deletePaymentMethod = async (req, res) => {
+  try {
+    const { id, paymentId } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ success:false,message: 'User not found' });
+
+    const methodIndex = user.paymentMethods.findIndex(method => method.id === paymentId);
+    if (methodIndex === -1) return res.status(404).json({ success:false,message: 'Payment method not found' });
+
+    const wasDefault = user.paymentMethods[methodIndex].isDefault;
+    user.paymentMethods.splice(methodIndex, 1);
+
+    if (wasDefault && user.paymentMethods.length > 0) {
+      user.paymentMethods[0].isDefault = true;
+    }
+
+    await user.save();
+
+    res.status(200).json({ success:true,message: 'Payment method deleted successfully',user, paymentMethods: user.paymentMethods });
+  } catch (error) {
+    res.status(500).json({ success:false,message: 'Server error', error: error.message });
+  }
+};
+
+const setDefaultPaymentMethod = async (req, res) => {
+  try {
+    const { id, paymentId } = req.params;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ success:false,message: 'User not found' });
+
+    let found = false;
+
+    user.paymentMethods = user.paymentMethods.map((method) => {
+      if (method.id === paymentId) {
+        found = true;
+        return { ...method.toObject(), isDefault: true };
+      }
+      return { ...method.toObject(), isDefault: false };
+    });
+
+    if (!found) {
+      return res.status(404).json({ success:false,message: 'Payment method not found' });
+    }
+
+    await user.save();
+
+    res.status(200).json({ success:true,message: 'Default payment method updated',user, paymentMethods: user.paymentMethods });
+  } catch (error) {
+    res.status(500).json({ success:false,message: 'Server error', error: error.message });
+  }
+};
+
   
   module.exports = {
     registerUser,
@@ -271,5 +363,8 @@ const verifyEmail = async (req, res) => {
     getUser,
     verifyEmail,
     resendOtp,
-    getAllUsers
+    getAllUsers,
+    deletePaymentMethod,
+    addPaymentMethod,
+    setDefaultPaymentMethod
   };

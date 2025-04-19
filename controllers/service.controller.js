@@ -72,12 +72,22 @@ const toggleServiceStatus = async (req, res) => {
       }
       service.isActive = status;
       await service.save();
-      console.log(service)
+  
       res.status(200).json({ success: true, message: `Service is now ${service.isActive ? "active" : "inactive"}`, status:service.isActive  });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
     }
   };
+    const getAvailableServices = async (req, res) => {
+      try {
+        const services = await Service.find({ isActive: true });
+      
+        return res.status(200).json({ success: true, count: services.length, services });
+      } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+      }
+    };
+  
   
   module.exports = {
     createService,
@@ -85,5 +95,6 @@ const toggleServiceStatus = async (req, res) => {
     getService,
     updateService,
     deleteService,
-    toggleServiceStatus
+    toggleServiceStatus,
+    getAvailableServices
   };

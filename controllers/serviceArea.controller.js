@@ -69,6 +69,15 @@ const toggleServiceAreaStatus = async (req, res) => {
       res.status(500).json({ success: false, message: error.message });
     }
   };
+  const getAvailableServiceAreas = async (req, res) => {
+    try {
+      const areas = await ServiceArea.find({ isActive: true });
+
+      return res.status(200).json({ success: true, count: areas.length, areas });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  };
 
 module.exports = {
   createServiceArea,
@@ -76,5 +85,6 @@ module.exports = {
   getServiceAreaById,
   updateServiceArea,
   deleteServiceArea,
-  toggleServiceAreaStatus
+  toggleServiceAreaStatus,
+  getAvailableServiceAreas
 };

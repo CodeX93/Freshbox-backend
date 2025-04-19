@@ -126,7 +126,7 @@ const UserSchema = new mongoose.Schema({
   username:{
     type:String
   }
-});
+},{timestamps:true});
 
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
