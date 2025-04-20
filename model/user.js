@@ -119,9 +119,10 @@ const UserSchema = new mongoose.Schema({
   otpExpiry:{
     type: Date,
   },
-  block:{
-    type:Boolean,
-    default:false,
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: 'active',
   },
   username:{
     type:String
