@@ -19,6 +19,14 @@ const PaymentMethodSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  cardNumber:{
+    type: String,
+    required: true
+  },
+  nameOnCard:{
+    type: String,
+    required: true
+  },
   isDefault: {
     type: Boolean,
     default: false

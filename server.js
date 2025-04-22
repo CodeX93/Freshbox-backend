@@ -15,6 +15,7 @@ require('./config/passport');
 const serviceAreaRoutes=require('./route/serviceArea.routes')
 const userRoutes = require('./route/auth.routes');
 const serviceRouter = require('./route/service.routes');
+const orderRouter = require('./route/order.routes');
 
 const app = express();
 
@@ -100,3 +101,4 @@ app.listen(PORT, () => {
 app.use('/api/auth', userRoutes);
 app.use('/api/service', serviceRouter);
 app.use('/api/serviceArea', serviceAreaRoutes);
+app.use("/api/orders", orderRouter);

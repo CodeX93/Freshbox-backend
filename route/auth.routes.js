@@ -22,7 +22,7 @@ userRoutes.get("/:id", getUser);
 userRoutes.put("/update/:id", updateUser);
 userRoutes.post("/resend-otp", resendOtp);
 userRoutes.get("/", getAllUsers); 
-userRoutes.post("/crate-payment-method/:id",addPaymentMethod );
+userRoutes.post("/create-payment-method/:id",addPaymentMethod );
 userRoutes.delete("/delete-payment-method/:id/:paymentId", deletePaymentMethod); 
 userRoutes.put("/set-as-default-method/:id/:paymentId", setDefaultPaymentMethod); 
 userRoutes.put("/status/:id/:status", updateUserStatus);

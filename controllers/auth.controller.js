@@ -312,7 +312,6 @@ const addPaymentMethod = async (req, res) => {
 
     user.paymentMethods.push(newMethod);
     await user.save();
-
     res.status(200).json({
       success: true,
       message: "Payment method added successfully",
