@@ -95,17 +95,20 @@ const loginUser = async (req, res) => {
         .json({ success: false, message: "Email and password are required" });
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email })
+      .select("+password")
+      .populate("plan");
 
     if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid credentials" });
     }
-    if(user.status === "inactive"){
+
+    if (user.status === "inactive") {
       return res
-      .status(400)
-      .json({ success: false, message: "You are inactive" });
+        .status(400)
+        .json({ success: false, message: "You are inactive" });
     }
 
     const isValidPassword = await user.isPasswordCorrect(password);
@@ -123,6 +126,7 @@ const loginUser = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+   
 
     return res.status(200).json({
       message: "Login successful",
@@ -135,6 +139,7 @@ const loginUser = async (req, res) => {
     return res.status(500).json({ message: error.message, success: false });
   }
 };
+
 
 const updateUser = async (req, res) => {
   try {
@@ -163,9 +168,11 @@ const updateUser = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
 
-    const user = await User.findById(id).select("-password");
+    const user = await User.findById(id)
+      .select("-password")
+      .populate("plan");
 
     if (!user) {
       return res
@@ -181,6 +188,7 @@ const getUser = async (req, res) => {
     return res.status(500).json({ message: error.message, success: false });
   }
 };
+
 const verifyEmail = async (req, res) => {
   try {
     const { email, otp } = req.body;
