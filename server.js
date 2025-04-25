@@ -17,6 +17,7 @@ const userRoutes = require('./route/auth.routes');
 const serviceRouter = require('./route/service.routes');
 const orderRouter = require('./route/order.routes');
 const paymentRoutes = require('./route/payment.routes');
+const riderRoutes = require('./route/rider.routes');
 
 const app = express();
 
@@ -107,3 +108,4 @@ app.use('/api/service', serviceRouter);
 app.use('/api/serviceArea', serviceAreaRoutes);
 app.use("/api/orders", orderRouter);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/rider", riderRoutes);
