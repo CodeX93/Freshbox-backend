@@ -21,6 +21,7 @@ const registerUser = async (req, res) => {
       });
     }
 
+      const existUnVerifiedUser = await User.findOneAndDelete({ email,emailVerified:false })
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
