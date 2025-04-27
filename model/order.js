@@ -2,21 +2,23 @@ const mongoose = require("mongoose");
 
 const { Schema, model, Types } = mongoose;
 const stepSchema = new Schema(
-    {
-      label: {
-        type: String,
-        required: true,
-      },
-      completed: {
-        type: Boolean,
-        default: false,
-      },
-      date: {
-        type: Date,
-      },
+  {
+    status: {
+      type: String,
     },
-    { _id: false } 
-  );
+    completed: {
+      type: Boolean,
+      default: false,
+    },
+    note: {
+      type: String,
+    },
+    timestamp: {
+      type: Date,
+    },
+  },
+  { _id: false }
+);
 
 const addressSchema = new Schema(
   {
@@ -78,9 +80,9 @@ const orderItemSchema = new Schema(
       required: true,
       min: 1,
     },
-    currentStep:{
-        type: Number,
-        default:1
+    currentStep: {
+      type: Number,
+      default: 1,
     },
     category: {
       type: String,
@@ -112,29 +114,60 @@ const orderSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["assign", "processing", "rejected", "delivered","scheduled","ready"],
+      enum: [
+        "assign",
+        "processing",
+        "rejected",
+        "delivered",
+        "scheduled",
+        "ready",
+        "cancelled"
+      ],
       default: "processing",
       lowercase: true,
     },
     steps: {
-        type: [stepSchema],
-        default: [
-          { label: "Order Placed", completed: false },
-          { label: "Picked Up", completed: false },
-          { label: "Cleaning", completed: false },
-          { label: "Quality Check", completed: false },
-          { label: "Out for Delivery", completed: false },
-          { label: "Delivered", completed: false },
-        ],
-      },
+      type: [stepSchema],
+      default: [
+        { status: "Ordered", note: "Order placed", completed: false },
+        {
+          status: "Assigned",
+          note: "Assigned to rider Emily",
+          completed: false,
+        },
+        { status: "Picked Up", note: "Picked up by rider", completed: false },
+        {
+          status: "In Progress",
+          note: "Processing at Elite Cleaners",
+          completed: false,
+        },
+        {
+          status: "Ready for Delivery",
+          note: "Processing complete, ready for delivery",
+          completed: false,
+        },
+        {
+          status: "Delivered",
+          note: "Delivered to customer",
+          completed: false,
+        },
+      ],
+    },
+    currentStep: {
+      type: Number,
+      default: 0,
+    },
     paymentType: {
       type: String,
       enum: ["card", "paypal"],
       required: true,
       lowercase: true,
     },
+    rider: {
+      type: Types.ObjectId,
+      ref: "Rider",
+    },
   },
   { timestamps: true }
 );
-module.exports = mongoose.model('Order', orderSchema);
-
+module.exports = mongoose.model("Order", orderSchema);

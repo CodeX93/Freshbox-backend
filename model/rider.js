@@ -61,8 +61,12 @@ const RiderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "inactive"],
-      default: "active",
+      enum: ["Available", "Busy", "On Break", "On Leave", "Inactive"],
+      default: "Available",
+    },
+    online: {
+      type: Boolean,
+      default: true,
     },
     username: {
       type: String,
@@ -73,9 +77,26 @@ const RiderSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    vehicle: {
+
+    vehicleCapacity: {
       type: String,
       default: "",
+    },
+    vehicleType: {
+      type: String,
+      default: "",
+    },
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    completedOrders: {
+      type: Number,
+      default: 0,
+    },
+    activeOrders: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -94,8 +115,6 @@ RiderSchema.pre("save", async function () {
 RiderSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
-
-
 
 const Rider = mongoose.model("Rider", RiderSchema);
 module.exports = Rider;

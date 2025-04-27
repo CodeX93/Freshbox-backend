@@ -91,7 +91,7 @@ const createCheckoutSession = async (req, res) => {
 const verifyPortalSession = async (req, res) => {
   try {
     let { customerId, userId, planId } = req.query;
-    console.log("Received customerId:", customerId);
+    console.log({  customerId, userId, planId});
 
     if (!customerId) {
       return res.status(400).json({

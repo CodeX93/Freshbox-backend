@@ -69,12 +69,7 @@ const registerRider = async (req, res) => {
     return res.status(201).json({
       message: "Rider registered successfully. Please verify your email.",
       success: true,
-      rider: {
-        _id: rider._id,
-        email: rider.email,
-        name: rider.name,
-        emailVerified: rider.emailVerified,
-      },
+      rider,
       token,
     });
   } catch (error) {
@@ -193,7 +188,7 @@ const getRider = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    console.log({otp})
+ 
 
     if (!email || !otp) {
       return res
@@ -202,7 +197,7 @@ const verifyEmail = async (req, res) => {
     }
 
     const rider = await Rider.findOne({ email });
-    console.log({rider})
+
 
     if (!rider) {
       return res
