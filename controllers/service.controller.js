@@ -65,7 +65,7 @@ const deleteService = async (req, res) => {
 const toggleServiceStatus = async (req, res) => {
     try {
         const {status} = req.params;
-        console.log(status)
+ 
       const service = await Service.findById(req.params.id);
       if (!service) {
         return res.status(404).json({ success: false, message: "Service not found" });

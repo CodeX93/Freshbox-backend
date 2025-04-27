@@ -91,7 +91,7 @@ const createCheckoutSession = async (req, res) => {
 const verifyPortalSession = async (req, res) => {
   try {
     let { customerId, userId, planId } = req.query;
-    console.log({  customerId, userId, planId});
+ 
 
     if (!customerId) {
       return res.status(400).json({
@@ -104,7 +104,7 @@ const verifyPortalSession = async (req, res) => {
     if (customerId.startsWith("cs_")) {
       const session = await stripe.checkout.sessions.retrieve(customerId);
       customerId = session.customer;
-      console.log("Extracted real customerId from session:", customerId);
+    
     }
 
     const subscriptions = await stripe.subscriptions.list({

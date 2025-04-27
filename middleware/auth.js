@@ -6,7 +6,7 @@ const User = require('../model/user');
 const JWT_SECRET = process.env.JWT_SECRET || 'yourSecretKeyForJWT';
 
 const isAuthenticated = async (req, res, next) => {
-  console.log('[Auth Middleware] Checking authentication...');
+
   
   // First check if user is authenticated with Passport session
   if (req.isAuthenticated && req.isAuthenticated()) {

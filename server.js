@@ -18,6 +18,7 @@ const serviceRouter = require('./route/service.routes');
 const orderRouter = require('./route/order.routes');
 const paymentRoutes = require('./route/payment.routes');
 const riderRoutes = require('./route/rider.routes');
+const supportRouter = require('./route/support.routes');
 
 const app = express();
 
@@ -110,3 +111,4 @@ app.use('/api/serviceArea', serviceAreaRoutes);
 app.use("/api/orders", orderRouter);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/rider", riderRoutes);
+app.use("/api/support", supportRouter);

@@ -3,7 +3,7 @@ const ServiceArea = require("../model/serviceArea");
 // Create
 const createServiceArea = async (req, res) => {
   try {
-    console.log(req.body)
+ 
     const area = await ServiceArea.create(req.body);
     return res.status(201).json({ success: true, message: "Service area created", area });
   } catch (error) {

@@ -70,7 +70,7 @@ const getUserOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
   try {
-    console.log(req.params.id)
+
     const order = await Order.findById(req.params.id)
       .populate([
         {
@@ -161,7 +161,7 @@ const toggleOrderStatus = async (req, res) => {
 const assignOrderToRider = async (req, res) => {
   try {
     const { orderId, riderId } = req.params;
-    console.log({orderId, riderId})
+   
 
     const order = await Order.findById(orderId);
 
@@ -210,7 +210,7 @@ const assignOrderToRider = async (req, res) => {
 const getRiderOrders = async (req, res) => {
   try {
     const { riderId } = req.params;
-    console.log(riderId)
+   
 
     const orders = await Order.find({ rider: riderId })
       .populate([
@@ -226,7 +226,7 @@ const getRiderOrders = async (req, res) => {
         },
       ]);
 
-    console.log(orders)  
+ 
 
     res.status(200).json({
       success: true,

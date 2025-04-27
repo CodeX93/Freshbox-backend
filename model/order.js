@@ -117,7 +117,6 @@ const orderSchema = new Schema(
       enum: [
         "assign",
         "processing",
-        "rejected",
         "delivered",
         "scheduled",
         "ready",
