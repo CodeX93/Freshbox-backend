@@ -28,7 +28,8 @@ app.use(cookieParser());
 // Configure CORS with credentials support
 const allowedOrigins = [
   "http://localhost:3001",
-  "http://localhost:3000"
+  "http://localhost:3000",
+  "https://freshbox-frontend.netlify.app"
 ];
 
 app.use(cors({
