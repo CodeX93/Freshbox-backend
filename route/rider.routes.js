@@ -8,6 +8,7 @@ const {updateRiderStatus,
   updateRider,
   resendOtp,
   getAllRiders,
+  updateOnlineStatus,
 } = require("../controllers/rider.controller");
 
 const riderRoutes = express.Router();
@@ -20,5 +21,6 @@ riderRoutes.put("/update/:id", updateRider);
 riderRoutes.post("/resend-otp", resendOtp);
 riderRoutes.get("/", getAllRiders);
 riderRoutes.put("/status/:id/:status", updateRiderStatus);
+riderRoutes.put("/online/:id/:online", updateOnlineStatus);
 
 module.exports = riderRoutes;

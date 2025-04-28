@@ -319,6 +319,30 @@ const updateRiderStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+const updateOnlineStatus =async(req,res)=>{
+  try {
+    const { id, online } = req.params;
+    const rider = await Rider.findById(id);
+    if (!rider) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Rider not found" });
+    }
+
+    rider.online = online;
+    await rider.save();
+
+    return res.status(200).json({
+      success: true,
+      status: rider.online,
+      rider,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
 module.exports = {
   registerRider,
   loginRider,
@@ -328,4 +352,5 @@ module.exports = {
   resendOtp,
   getAllRiders,
   updateRiderStatus,
+  updateOnlineStatus
 };
