@@ -52,7 +52,10 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (_req, res) => {
   try {
-    const orders = await Order.find().populate("user");
+    const orders = await Order.find()
+    .populate('user')
+    .populate('rider');
+  
     res.status(200).json({ success: true, count: orders.length, orders });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -90,7 +93,7 @@ const getOrder = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
-console.log(order)
+
     res.status(200).json({ success: true, order });
 
   } catch (error) {
@@ -217,8 +220,8 @@ const getRiderOrders = async (req, res) => {
         {
           path: "user",
           populate: {
-            path: "plan", // plan inside user
-            model: "Subscription", // model name of subscription
+            path: "plan",
+            model: "Subscription", 
           },
         },
         {
