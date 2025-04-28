@@ -1,6 +1,6 @@
 // routes/supportTicketRoutes.js
 const express = require('express');
-const { createSupportTicket, getAllSupportTickets, getSupportTicket, updateSupportTicket, deleteSupportTicket } = require('../controllers/support.controller');
+const { createSupportTicket, getAllSupportTickets, getSupportTicket, updateSupportTicket, deleteSupportTicket, sendSupportResponse } = require('../controllers/support.controller');
 const supportRouter = express.Router();
 
 
@@ -9,5 +9,6 @@ supportRouter.get('/', getAllSupportTickets);
 supportRouter.get('/:id', getSupportTicket);
 supportRouter.put('/:id', updateSupportTicket);
 supportRouter.delete('/:id', deleteSupportTicket);
+supportRouter.put('/send/:id', sendSupportResponse);
 
 module.exports = supportRouter;

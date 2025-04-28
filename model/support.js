@@ -1,5 +1,21 @@
-// models/SupportTicket.js
 const mongoose = require('mongoose');
+
+// Define a proper message schema
+const messageSchema = new mongoose.Schema({
+  sender: {
+    type: String,
+    enum: ["Customer", "Support"],
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now
+  }
+}, { _id: true }); 
 
 const SupportTicketSchema = new mongoose.Schema({
   name: {
@@ -11,8 +27,7 @@ const SupportTicketSchema = new mongoose.Schema({
     required: true
   },
   phone: {
-    type: String,
-    required: false
+    type: String
   },
   category: {
     type: String,
@@ -20,27 +35,25 @@ const SupportTicketSchema = new mongoose.Schema({
     required: true
   },
   orderNumber: {
-    type: String,
-    required: false
-  },
-  message: {
-    type: String,
-    required: true
+    type: String
   },
 
+  messages: [messageSchema],
   from: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: false
+    ref: 'User'
   },
   priority: {
     type: String,
     enum: ["low", "medium", "high", "urgent"],
     default: "medium"
   },
-
-},{timestamps:true});
-
+  status: {
+    type: String,
+    enum: ["open", "in Progress", "closed", "pending customer response"],
+    default: "open"
+  },
+}, { timestamps: true });
 
 const SupportTicket = mongoose.model("SupportTicket", SupportTicketSchema);
 module.exports = SupportTicket;
