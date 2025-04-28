@@ -30,7 +30,10 @@ app.use(cookieParser());
 const allowedOrigins = [
   "http://localhost:3001",
   "http://localhost:3000",
-  "https://freshbox-frontend.netlify.app"
+  "https://freshbox-frontend.netlify.app",
+  "https://adminpanelfreshbox.netlify.app",
+  "https://rider-freshbox.netlify.app"
+
 ];
 
 app.use(cors({

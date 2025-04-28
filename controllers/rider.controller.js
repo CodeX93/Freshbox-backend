@@ -141,6 +141,7 @@ const updateRider = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
+    console.log(updates)
 
     const updatedRider = await Rider.findByIdAndUpdate(id, updates, {
       new: true,
@@ -151,6 +152,7 @@ const updateRider = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Rider not found" });
     }
+    
 
     return res.status(200).json({
       message: "Rider updated successfully",
@@ -158,6 +160,7 @@ const updateRider = async (req, res) => {
       rider: updatedRider,
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: error.message, success: false });
   }
 };
