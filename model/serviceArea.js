@@ -67,14 +67,20 @@ const ServiceAreaSchema = new mongoose.Schema({
       default: 'Point'
     },
     coordinates: {
-      type: [Number], // [longitude, latitude]
-
+      type: [Number],
+      default: [-0.1276, 51.5074], 
+      validate: {
+        validator: function (val) {
+          return !val || (Array.isArray(val) && val.length === 2);
+        },
+        message: 'Coordinates must be an array of [longitude, latitude]'
+      }
     }
   }
 }, {
   timestamps: true
 });
 
-ServiceAreaSchema.index({ location: '2dsphere' }); 
+
 
 module.exports = mongoose.model('ServiceArea', ServiceAreaSchema);

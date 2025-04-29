@@ -7,6 +7,7 @@ const createServiceArea = async (req, res) => {
     const area = await ServiceArea.create(req.body);
     return res.status(201).json({ success: true, message: "Service area created", area });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ success: false, message: error.message });
   }
 };
