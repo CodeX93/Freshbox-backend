@@ -52,10 +52,8 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (_req, res) => {
   try {
-    const orders = await Order.find()
-    .populate('user')
-    .populate('rider');
-  
+    const orders = await Order.find().populate("user").populate("rider");
+
     res.status(200).json({ success: true, count: orders.length, orders });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -73,20 +71,18 @@ const getUserOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
   try {
-
-    const order = await Order.findById(req.params.id)
-      .populate([
-        {
-          path: "user",
-          populate: {
-            path: "plan", 
-            model: "Subscription",
-          },
+    const order = await Order.findById(req.params.id).populate([
+      {
+        path: "user",
+        populate: {
+          path: "plan",
+          model: "Subscription",
         },
-        {
-          path: "rider", // populate rider
-        },
-      ]);
+      },
+      {
+        path: "rider", // populate rider
+      },
+    ]);
 
     if (!order) {
       return res
@@ -95,13 +91,11 @@ const getOrder = async (req, res) => {
     }
 
     res.status(200).json({ success: true, order });
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 const updateOrder = async (req, res) => {
   try {
@@ -143,26 +137,26 @@ const statusToStep = {
   scheduled: 2,
   ready: 3,
   delivered: 5,
-  cancelled: -1
+  cancelled: -1,
 };
 
 const toggleOrderStatus = async (req, res) => {
   try {
     const { id, status } = req.params;
-    
+
     // Validate status
     if (!(status in statusToStep)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid status provided" 
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status provided",
       });
     }
 
     const order = await Order.findById(id);
     if (!order) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Order not found" 
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
       });
     }
 
@@ -172,25 +166,24 @@ const toggleOrderStatus = async (req, res) => {
 
     // Update steps based on status
     switch (status) {
-        
-      case 'scheduled':
+      case "scheduled":
         order.steps[2].completed = true;
         order.steps[2].timestamp = new Date();
         break;
-        
-      case 'ready':
+
+      case "ready":
         order.steps[3].completed = true;
         order.steps[3].timestamp = new Date();
         order.steps[4].completed = true; // Ready for Delivery
         order.steps[4].timestamp = new Date();
         break;
-        
-      case 'delivered':
+
+      case "delivered":
         order.steps[5].completed = true;
         order.steps[5].timestamp = new Date();
         break;
-        
-      case 'cancelled':
+
+      case "cancelled":
         // Optionally handle cancellation - mark all steps incomplete?
         break;
     }
@@ -202,12 +195,12 @@ const toggleOrderStatus = async (req, res) => {
       message: `Order status updated to ${status}`,
       status: order.status,
       currentStep: order.currentStep,
-      steps: order.steps
+      steps: order.steps,
     });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      message: error.message 
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
@@ -215,7 +208,6 @@ const toggleOrderStatus = async (req, res) => {
 const assignOrderToRider = async (req, res) => {
   try {
     const { orderId, riderId } = req.params;
-   
 
     const order = await Order.findById(orderId);
 
@@ -242,12 +234,9 @@ const assignOrderToRider = async (req, res) => {
     assignedStep.timestamp = new Date();
 
     await order.save();
-    
 
     rider.activeOrders = rider.activeOrders + 1;
     await rider.save();
-
-  
 
     res.status(200).json({
       success: true,
@@ -256,7 +245,7 @@ const assignOrderToRider = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -264,37 +253,133 @@ const assignOrderToRider = async (req, res) => {
 const getRiderOrders = async (req, res) => {
   try {
     const { riderId } = req.params;
-   
 
-    const orders = await Order.find({ rider: riderId })
-      .populate([
-        {
-          path: "user",
-          populate: {
-            path: "plan",
-            model: "Subscription", 
-          },
+    const orders = await Order.find({ rider: riderId }).populate([
+      {
+        path: "user",
+        populate: {
+          path: "plan",
+          model: "Subscription",
         },
-        {
-          path: "rider", // rider populate
-        },
-      ]);
-
- 
+      },
+      {
+        path: "rider", // rider populate
+      },
+    ]);
 
     res.status(200).json({
       success: true,
       message: "Orders of rider",
       orders,
     });
-    
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
+const changeOrderStepStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { note, status } = req.body;
 
+    const validStatus = String(status).toLowerCase().replace(/\s+/g, '');
+    
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status provided",
+      });
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Update steps based on status
+    switch (validStatus) {
+      case "assigned":
+        order.status = "assign";
+        order.currentStep = 1;
+        order.steps[1] = {
+          status: "Assigned",
+          completed: true,
+          timestamp: new Date(),
+          note: note || order.steps[1].note,
+        };
+        break;
+
+      case "pickedup":
+        order.status = "scheduled";
+        order.currentStep = 2;
+        order.steps[2] = {
+          status: "Picked Up",
+          completed: true,
+          timestamp: new Date(),
+          note: note || order.steps[2].note,
+        };
+        break;
+
+      case "inprogress":
+        order.status = "scheduled";
+        order.currentStep = 2;
+        order.steps[3] = {
+          status: "In Progress",
+          completed: true,
+          timestamp: new Date(),
+          note: note || order.steps[3].note,
+        };
+        break;
+
+      case "readyfordelivery":
+        order.status = "ready";
+        order.currentStep = 3;
+        order.steps[4] = {
+          status: "Ready for Delivery",
+          completed: true,
+          timestamp: new Date(),
+          note: note || order.steps[4].note,
+        };
+        break;
+
+      case "delivered":
+        order.status = "delivered";
+        order.currentStep = 5;
+        order.steps[5] = {
+          status: "Delivered",
+          completed: true,
+          timestamp: new Date(),
+          note: note || order.steps[5].note,
+        };
+        break;
+
+      case "cancelled":
+        order.status = "cancelled";
+        order.cancellationNote = note || "";
+        break;
+    }
+
+    // Save the updated order
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      order: order,
+    });
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 module.exports = {
   createOrder,
@@ -305,5 +390,6 @@ module.exports = {
   deleteOrder,
   toggleOrderStatus,
   getRiderOrders,
-  assignOrderToRider
+  assignOrderToRider,
+  changeOrderStepStatus,
 };

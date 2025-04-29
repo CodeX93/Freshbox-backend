@@ -141,7 +141,7 @@ const updateRider = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-    console.log(updates)
+    (updates)
 
     const updatedRider = await Rider.findByIdAndUpdate(id, updates, {
       new: true,

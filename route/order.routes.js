@@ -9,6 +9,7 @@ const {
   getUserOrders,
   getRiderOrders,
   assignOrderToRider,
+  changeOrderStepStatus,
 } = require("../controllers/order.controller");
 
 const orderRouter = express.Router();
@@ -22,6 +23,7 @@ orderRouter.put("/:id", updateOrder);
 orderRouter.delete("/:id", deleteOrder);
 orderRouter.get("/rider/:riderId", getRiderOrders);
 orderRouter.put("/assign-order/:riderId/:orderId", assignOrderToRider);
+orderRouter.put("/update-step/:id", changeOrderStepStatus);
 
 
 module.exports = orderRouter;
