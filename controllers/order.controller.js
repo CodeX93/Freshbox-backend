@@ -137,27 +137,78 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+const statusToStep = {
+  processing: 0,
+  assign: 1,
+  scheduled: 2,
+  ready: 3,
+  delivered: 5,
+  cancelled: -1
+};
+
 const toggleOrderStatus = async (req, res) => {
   try {
-    const { status } = req.params;
-    const order = await Order.findById(req.params.id);
-
-    if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+    const { id, status } = req.params;
+    
+    // Validate status
+    if (!(status in statusToStep)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid status provided" 
+      });
     }
 
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Order not found" 
+      });
+    }
+
+    // Update status and currentStep
     order.status = status;
+    order.currentStep = statusToStep[status];
+
+    // Update steps based on status
+    switch (status) {
+        
+      case 'scheduled':
+        order.steps[2].completed = true;
+        order.steps[2].timestamp = new Date();
+        break;
+        
+      case 'ready':
+        order.steps[3].completed = true;
+        order.steps[3].timestamp = new Date();
+        order.steps[4].completed = true; // Ready for Delivery
+        order.steps[4].timestamp = new Date();
+        break;
+        
+      case 'delivered':
+        order.steps[5].completed = true;
+        order.steps[5].timestamp = new Date();
+        break;
+        
+      case 'cancelled':
+        // Optionally handle cancellation - mark all steps incomplete?
+        break;
+    }
+
     await order.save();
 
     res.status(200).json({
       success: true,
-      message: `Order status updated to ${order.status}`,
+      message: `Order status updated to ${status}`,
       status: order.status,
+      currentStep: order.currentStep,
+      steps: order.steps
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
   }
 };
 

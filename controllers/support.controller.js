@@ -35,6 +35,7 @@ const createSupportTicket = async (req, res) => {
 
     res.status(201).json({ success: true, ticket });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ success: false, message: error.message });
   }
 };

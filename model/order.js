@@ -117,10 +117,10 @@ const orderSchema = new Schema(
       enum: [
         "assign",
         "processing",
-        "delivered",
         "scheduled",
         "ready",
-        "cancelled"
+        "cancelled",
+        "delivered",
       ],
       default: "processing",
       lowercase: true,
