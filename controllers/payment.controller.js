@@ -11,6 +11,37 @@ paypal.configure({
   client_secret: process.env.PAYPAL_CLIENT_SECRET,
 });
 
+
+const createPlans = async (req, res) => {
+  try {
+    const data = req.body;
+
+    // Check if it's a single object or an array
+    if (Array.isArray(data)) {
+      const createdPlans = await Plan.insertMany(data);
+      return res.status(201).json({
+        success: true,
+        message: `${createdPlans.length} plans created successfully`,
+        plans: createdPlans,
+      });
+    } else {
+      const createdPlan = await Plan.create(data);
+      return res.status(201).json({
+        success: true,
+        message: "Plan created successfully",
+        plan: createdPlan,
+      });
+    }
+  } catch (error) {
+    console.error("Create Plan Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Server Error",
+    });
+  }
+};
+
+
 const getAllPlans = async (req, res) => {
   try {
     const plans = await Plan.find();
@@ -329,6 +360,7 @@ const createCheckoutOrderPaypal = async (req, res) => {
 };
 
 module.exports = {
+  createPlans,
   getAllPlans,
   createCheckoutSession,
   verifyPortalSession,
