@@ -97,11 +97,7 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-const PORT = process.env.PORT;
-console.log(`Starting server on port ${PORT}`);
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
 
 
 // Routes 
@@ -115,3 +111,11 @@ app.use("/api/orders", orderRouter);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/rider", riderRoutes);
 app.use("/api/support", supportRouter);
+
+
+
+const PORT = process.env.PORT;
+console.log(`Starting server on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

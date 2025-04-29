@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  createPlans,
   getAllPlans,
   createCheckoutSession,
   verifyPortalSession,
@@ -9,6 +10,7 @@ const {
 
 const paymentRoutes = express.Router();
 
+paymentRoutes.post("/addPlan", createPlans);
 paymentRoutes.get("/plans", getAllPlans);
 
 paymentRoutes.post("/create-checkout-session", createCheckoutSession);
