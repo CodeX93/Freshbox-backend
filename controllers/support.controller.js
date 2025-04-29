@@ -113,7 +113,7 @@ const sendSupportResponse = async (req, res) => {
       message: message,
       timestamp: new Date()
     });
-    ticket.status="in Progress";
+    ticket.status="In Progress";
 
     await ticket.save(); 
 
