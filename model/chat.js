@@ -54,6 +54,11 @@ const chatSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  status:{
+    type: String,
+    enum: ["active", "arcived"],
+    default:"active"
+  }
 });
 
 const Chat = mongoose.model("Chat", chatSchema);

@@ -43,7 +43,7 @@ function setupSocketServer(server) {
           // Join rooms for all active orders
           const activeOrders = await Order.find({
             user: userId,
-            status: { $in: ["assign", "scheduled", "ready"] },
+            status: { $in: ["assign", "scheduled", "ready","delivered"] },
           });
       
 
@@ -78,7 +78,7 @@ function setupSocketServer(server) {
           const activeOrders = await Order.find({
             rider: riderId,
             status: {
-              $in: ["assign", "scheduled", "ready"],
+              $in: ["assign", "scheduled", "ready","delivered"],
             },
           });
 
