@@ -4,6 +4,7 @@ const Chat = require("../model/chat")
 const createFirstChat =async (req, res) => {
     try {
       const { orderId, riderId } = req.body;
+      console.log({orderId, riderId })
       
       if (!orderId || !riderId) {
         return res.status(400).json({ success:false,message: 'Order ID and Rider ID are required' });
@@ -30,7 +31,7 @@ const createFirstChat =async (req, res) => {
           {
             sender: 'rider',
             senderId: riderId,
-            content: 'Your order has been assigned me. You can communicate with me here.',
+            content: `Hello! I am your rider for Order ${orderId}`,
             timestamp: new Date(),
             isRead: false
           }
@@ -38,6 +39,7 @@ const createFirstChat =async (req, res) => {
       });
       
       await newChat.save();
+      console.log(newChat)
       
       // Notify connected users through socket (implementation in socketServer.js)
       const io = req.app.get('io');
@@ -72,12 +74,12 @@ const createFirstChat =async (req, res) => {
 
   const allUserChats = async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.params.id;
       
       const chats = await Chat.find({ userId })
         .sort({ lastUpdated: -1 })
-        .populate('orderId', 'status')
-        .populate('riderId', 'name profilePicture');
+        .populate('orderId', 'status _id createdAt')
+        .populate('riderId', 'name profilePicture phoneNumber');
       
       res.status(200).json({ success:true,chats });
       
@@ -89,13 +91,12 @@ const createFirstChat =async (req, res) => {
 
   const allRiderChats =async (req, res) => {
     try {
-      const riderId = req.user.id;
+      const riderId = req.params.id;
       
       const chats = await Chat.find({ riderId })
         .sort({ lastUpdated: -1 })
-        .populate('orderId', 'status')
-        .populate('userId', 'name profilePicture');
-      
+        .populate('orderId', 'status _id createdAt')
+        .populate('userId', 'name profilePicture phoneNumber');
       res.status(200).json({ success:true,chats });
       
     } catch (error) {

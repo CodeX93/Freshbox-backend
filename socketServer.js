@@ -15,16 +15,12 @@ function setupSocketServer(server) {
 
   const io = new Server(server, {
     cors: {
-      origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error("Not allowed by CORS"));
-        }
-      },
+      origin: allowedOrigins,
       methods: ["GET", "POST"],
       credentials: true
-    }
+    },
+    transports: ['websocket', 'polling'], 
+    allowEIO3: true 
   });
 
   // Store online users
@@ -32,12 +28,13 @@ function setupSocketServer(server) {
   const onlineRiders = new Map();
 
   io.on("connection", (socket) => {
-    console.log("New client connected:", socket.id);
+   
 
     // User authentication
     socket.on("authenticate_user", async (userId) => {
       try {
         const user = await User.findById(userId);
+
         if (user) {
           onlineUsers.set(userId, socket.id);
           socket.userId = userId;
@@ -48,6 +45,7 @@ function setupSocketServer(server) {
             user: userId,
             status: { $in: ["assign", "scheduled", "ready"] },
           });
+      
 
           activeOrders.forEach((order) => {
             socket.join(`order_${order._id}`);
@@ -147,6 +145,7 @@ function setupSocketServer(server) {
     socket.on("send_message", async (data) => {
       try {
         const { orderId, content } = data;
+   
 
         if (!socket.userType || (!socket.userId && !socket.riderId)) {
           socket.emit("error", {
@@ -287,7 +286,7 @@ function setupSocketServer(server) {
 
     // Handle disconnection
     socket.on("disconnect", () => {
-      console.log("Client disconnected:", socket.id);
+     
 
       if (socket.userType === "user" && socket.userId) {
         onlineUsers.delete(socket.userId);

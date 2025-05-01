@@ -55,6 +55,7 @@ app.use(cors({
   credentials: true,
 }));
 
+
 // Configure session
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -116,6 +117,7 @@ app.use("/api/support", supportRouter);
 app.use("/api/chat", chatRoutes);
 
 const PORT = process.env.PORT || 3001;
+
 
 // Use server.listen instead of app.listen
 server.listen(PORT, () => {
