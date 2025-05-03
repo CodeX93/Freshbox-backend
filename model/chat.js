@@ -56,7 +56,7 @@ const chatSchema = new mongoose.Schema({
   },
   status:{
     type: String,
-    enum: ["active", "arcived"],
+    enum: ["active", "archived"],
     default:"active"
   }
 });

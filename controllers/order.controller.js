@@ -1,5 +1,7 @@
 const Order = require("../model/order");
 const Rider = require("../model/rider");
+const Chat = require("../model/chat")
+
 
 const createOrder = async (req, res) => {
   try {
@@ -160,7 +162,7 @@ const toggleOrderStatus = async (req, res) => {
       });
     }
 
-    // Update status and currentStep
+    // Update order status and step
     order.status = status;
     order.currentStep = statusToStep[status];
 
@@ -174,7 +176,7 @@ const toggleOrderStatus = async (req, res) => {
       case "ready":
         order.steps[3].completed = true;
         order.steps[3].timestamp = new Date();
-        order.steps[4].completed = true; // Ready for Delivery
+        order.steps[4].completed = true;
         order.steps[4].timestamp = new Date();
         break;
 
@@ -184,11 +186,16 @@ const toggleOrderStatus = async (req, res) => {
         break;
 
       case "cancelled":
-        // Optionally handle cancellation - mark all steps incomplete?
+        // Optional: Handle cancellations
         break;
     }
 
     await order.save();
+
+    // 🔁 Update related chat status
+    const chatStatus = status === "delivered" ? "archived" : "active";
+    const chat = await Chat.findOneAndUpdate({ orderId: id }, { status: chatStatus },{new:true});
+    console.log(chat)
 
     res.status(200).json({
       success: true,
@@ -204,6 +211,7 @@ const toggleOrderStatus = async (req, res) => {
     });
   }
 };
+
 
 const assignOrderToRider = async (req, res) => {
   try {
@@ -284,7 +292,6 @@ const changeOrderStepStatus = async (req, res) => {
     const { note, status } = req.body;
 
     const validStatus = String(status).toLowerCase().replace(/\s+/g, '');
-    
 
     if (!status) {
       return res.status(400).json({
@@ -301,7 +308,7 @@ const changeOrderStepStatus = async (req, res) => {
       });
     }
 
-    // Update steps based on status
+    // Update order steps based on status
     switch (validStatus) {
       case "assigned":
         order.status = "assign";
@@ -367,6 +374,10 @@ const changeOrderStepStatus = async (req, res) => {
     // Save the updated order
     await order.save();
 
+    // Update related chat status
+    const chatStatus = validStatus === "delivered" ? "archived" : "active";
+    await Chat.findOneAndUpdate({ orderId: id }, { status: chatStatus });
+
     res.status(200).json({
       success: true,
       order: order,
@@ -380,6 +391,7 @@ const changeOrderStepStatus = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   createOrder,
