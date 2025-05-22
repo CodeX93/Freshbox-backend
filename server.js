@@ -19,9 +19,9 @@ const orderRouter = require('./route/order.routes');
 const paymentRoutes = require('./route/payment.routes');
 const riderRoutes = require('./route/rider.routes');
 const supportRouter = require('./route/support.routes');
-
+const adminUserRouter = require('./route/adminUser.routes'); 
 // Import socket server setup
-const setupSocketServer = require('./socketServer'); // Adjust path as needed
+const setupSocketServer = require('./socketServer'); 
 const chatRoutes = require('./route/chat.routes');
 
 const app = express();
@@ -115,7 +115,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/rider", riderRoutes);
 app.use("/api/support", supportRouter);
 app.use("/api/chat", chatRoutes);
-
+app.use("/api/admin",adminUserRouter);
 const PORT = process.env.PORT || 3001;
 
 
